@@ -1,16 +1,15 @@
 {
-  "name": "cors-anywhere",
-  "version": "0.4.3",
+  "name": "@pwp-app/cors-anywhere",
+  "version": "0.4.4",
   "description": "CORS Anywhere is a reverse proxy which adds CORS headers to the proxied request. Request URL is taken from the path",
   "license": "MIT",
-  "author": "Rob Wu <rob@robwu.nl>",
+  "author": "BackRunner",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Rob--W/cors-anywhere.git"
+    "url": "https://github.com/backrunner/cors-anywhere.git"
   },
   "bugs": {
-    "url": "https://github.com/Rob--W/cors-anywhere/issues/",
-    "email": "rob@robwu.nl"
+    "url": "https://github.com/backrunner/cors-anywhere/issues/"
   },
   "keywords": [
     "cors",
@@ -28,8 +27,8 @@
     "server.js"
   ],
   "dependencies": {
-    "http-proxy": "1.11.1",
-    "proxy-from-env": "0.0.1"
+    "http-proxy": "^1.18.1",
+    "proxy-from-env": "^1.1.0"
   },
   "devDependencies": {
     "coveralls": "^2.11.6",
