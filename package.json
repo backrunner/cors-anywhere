@@ -1,9 +1,20 @@
 {
   "name": "@pwp-app/cors-anywhere",
-  "version": "0.4.4",
-  "description": "CORS Anywhere is a reverse proxy which adds CORS headers to the proxied request. Request URL is taken from the path",
+  "version": "1.0.0",
+  "description": "A modified wrapped version of cors-anywhere",
   "license": "MIT",
   "author": "BackRunner",
+  "main": "./server.js",
+  "files": [
+    "lib/",
+    "test/",
+    "server.js"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "test": "mocha ./test/test*.js --reporter spec",
+    "test-coverage": "istanbul cover ./node_modules/.bin/_mocha -- test/test.js test/test-ratelimit.js --reporter spec"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/backrunner/cors-anywhere.git"
@@ -15,16 +26,7 @@
     "cors",
     "cross-domain",
     "http-proxy",
-    "proxy",
-    "heroku"
-  ],
-  "main": "./server.js",
-  "files": [
-    "lib/",
-    "test/",
-    "Procfile",
-    "demo.html",
-    "server.js"
+    "proxy"
   ],
   "dependencies": {
     "http-proxy": "^1.18.1",
@@ -38,10 +40,5 @@
     "mocha": "^3.4.2",
     "nock": "^8.2.1",
     "supertest": "^2.0.1"
-  },
-  "scripts": {
-    "lint": "eslint .",
-    "test": "mocha ./test/test*.js --reporter spec",
-    "test-coverage": "istanbul cover ./node_modules/.bin/_mocha -- test/test.js test/test-ratelimit.js --reporter spec"
   }
 }
