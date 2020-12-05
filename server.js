@@ -1,49 +1,36 @@
-// Listen on a specific host via the HOST environment variable
-var host = process.env.HOST || '0.0.0.0';
-// Listen on a specific port via the PORT environment variable
-var port = process.env.PORT || 8080;
+const path = require('path');
+const fs = require('fs');
+const proxy = require('./lib/cors-anywhere');
 
-// Grab the blacklist from the command-line so that we can update the blacklist without deploying
-// again. CORS Anywhere is open by design, and this blacklist is not used, except for countering
-// immediate abuse (e.g. denial of service). If you want to block all origins except for some,
-// use originWhitelist instead.
-var originBlacklist = parseEnvList(process.env.CORSANYWHERE_BLACKLIST);
-var originWhitelist = parseEnvList(process.env.CORSANYWHERE_WHITELIST);
-function parseEnvList(env) {
-  if (!env) {
-    return [];
-  }
-  return env.split(',');
+let config = {};
+
+if (fs.existsSync(path.resolve(__dirname, './config.js'))) {
+  config = require('./config');
 }
 
-// Set up rate-limiting to avoid abuse of the public CORS Anywhere server.
-var checkRateLimit = require('./lib/rate-limit')(process.env.CORSANYWHERE_RATELIMIT);
+const host = config.host || '0.0.0.0';
+const port = config.port || 8080;
 
-var cors_proxy = require('./lib/cors-anywhere');
-cors_proxy.createServer({
-  originBlacklist: originBlacklist,
-  originWhitelist: originWhitelist,
-  requireHeader: ['origin', 'x-requested-with'],
-  checkRateLimit: checkRateLimit,
-  removeHeaders: [
-    'cookie',
-    'cookie2',
-    // Strip Heroku-specific headers
-    'x-request-start',
-    'x-request-id',
-    'via',
-    'connect-time',
-    'total-route-time',
-    // Other Heroku added debug headers
-    // 'x-forwarded-for',
-    // 'x-forwarded-proto',
-    // 'x-forwarded-port',
-  ],
-  redirectSameOrigin: true,
+const proxyConfig = {
+  originBlacklist: config.originBlacklist || [],
+  originWhiteList: config.originWhiteList || [],
+  requireHeader: config.requireHeader || ['origin', 'x-requested-with'],
+  removeHeaders: config.removeHeaders || [],
+  redirectSameOrigin: config.redirectSameOrigin || true,
   httpProxyOptions: {
-    // Do not add X-Forwarded-For, etc. headers, because Heroku already adds it.
-    xfwd: false,
+    xfwd: config.xfwd || true,
   },
-}).listen(port, host, function() {
-  console.log('Running CORS Anywhere on ' + host + ':' + port);
+};
+
+let rateLimit = {};
+
+if (config.checkRateLimit && config.rateLimit) {
+  rateLimit = require('./lib/rate-limit')(config.rateLimit);
+}
+
+proxy.createServer({
+  ...proxyConfig,
+  ...rateLimit,
+}).listen(port, host, () => {
+  console.log(`cors-anywhere is running on ${host}:${port}`);
 });
